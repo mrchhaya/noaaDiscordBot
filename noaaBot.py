@@ -22,6 +22,7 @@ async def on_ready():
         numberRefDict = json.load(f)
     with open("nameref.json") as f:
         nameRefDict = json.load(f)
+    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="to the ocean"))
 
 def webScrape(url):
 
@@ -90,22 +91,11 @@ async def on_message(message):
     if message.content.startswith('$temp'):
         startT = time.time()
         params = message.content.split(" ")
-        if any(i.isdigit() for i in params[-1]):
-            if params[-1] in numberRefDict:
-                infoEmbed = discord.Embed(title = numberRefDict[params[-1]].get('name'), color = int(hex(random.randint(0,16777215)),16))
-                infoList = webScrape(numberRefDict.get(params[-1]).get('link'))
-                infoEmbed.add_field(name = 'Water Temperature', value = infoList[0])
-                infoEmbed.add_field(name = 'Air Temperature', value = infoList[1])
-                infoEmbed.add_field(name = 'Wind Speed', value = infoList[2])
-                infoEmbed.add_field(name = 'Water Level', value = infoList[3])
-                infoEmbed.add_field(name = 'Air Pressure', value = infoList[4] + ' millibars')
-                await message.channel.send(embed = infoEmbed)
-                print(time.time()-startT)
-        elif isinstance(params[-1], str):
-            for i in numberRefDict:
-                if re.search(r"\b" + re.escape(" ".join(params[1:]).lower()) + r"\b", numberRefDict[i].get('name').lower()):
-                    infoEmbed = discord.Embed(title = numberRefDict[i].get('name'), color = int(hex(random.randint(0,16777215)),16))
-                    infoList = webScrape(numberRefDict[i].get('link'))
+        if len(params) > 1:
+            if any(i.isdigit() for i in params[-1]):
+                if params[-1] in numberRefDict:
+                    infoEmbed = discord.Embed(title = numberRefDict[params[-1]].get('name'), color = int(hex(random.randint(0,16777215)),16))
+                    infoList = webScrape(numberRefDict.get(params[-1]).get('link'))
                     infoEmbed.add_field(name = 'Water Temperature', value = infoList[0])
                     infoEmbed.add_field(name = 'Air Temperature', value = infoList[1])
                     infoEmbed.add_field(name = 'Wind Speed', value = infoList[2])
@@ -113,13 +103,27 @@ async def on_message(message):
                     infoEmbed.add_field(name = 'Air Pressure', value = infoList[4] + ' millibars')
                     await message.channel.send(embed = infoEmbed)
                     print(time.time()-startT)
-                    break
+            elif isinstance(params[-1], str):
+                for i in numberRefDict:
+                    if re.search(r"\b" + re.escape(" ".join(params[1:]).lower()) + r"\b", numberRefDict[i].get('name').lower()):
+                        infoEmbed = discord.Embed(title = numberRefDict[i].get('name'), color = int(hex(random.randint(0,16777215)),16))
+                        infoList = webScrape(numberRefDict[i].get('link'))
+                        infoEmbed.add_field(name = 'Water Temperature', value = infoList[0])
+                        infoEmbed.add_field(name = 'Air Temperature', value = infoList[1])
+                        infoEmbed.add_field(name = 'Wind Speed', value = infoList[2])
+                        infoEmbed.add_field(name = 'Water Level', value = infoList[3])
+                        infoEmbed.add_field(name = 'Air Pressure', value = infoList[4] + ' millibars')
+                        await message.channel.send(embed = infoEmbed)
+                        print(time.time()-startT)
+                        break
+            else:
+                await message.channel.send("Weird Params")
         else:
             await message.channel.send("Weird Params")
 
     if message.content.startswith('$add'):
         splitMessage = message.content.split(" ")
-        if len(splitMessage) == 2:
+        if len(splitMessage) != 3:
             await message.channel.send("Weird Params. You need a link and name.")
         else:
             lastNum = list(numberRefDict.keys())[-1]
@@ -135,9 +139,13 @@ async def on_message(message):
                 json.dump(numberRefDict, f)
         
     if message.content.startswith('$help'):
-        helpEmbed = discord.Embed(title='Commands:', color = int(hex(random.randint(0,16777215)),16))      
+        helpEmbed = discord.Embed(title='Indices and Names:', color = int(hex(random.randint(0,16777215)),16))      
         for i in numberRefDict.keys():
             helpEmbed.add_field(name = "Location: " + numberRefDict[i].get('name'), value = "Index: " + str(i))
+        helpEmbed2 = discord.Embed(title = 'Commands: ', color = int(hex(random.randint(0,16777215)),16))      
+        helpEmbed2.add_field(name = "Data Lookup: ", value="$temp [number or name of buoy]", inline=False)
+        helpEmbed2.add_field(name = "Add Buoy: ", value = "$add [link] [name of buoy]", inline = False)
         await message.channel.send(embed = helpEmbed)
+        await message.channel.send(embed = helpEmbed2)
 
 client.run(discordToken)
