@@ -12,16 +12,14 @@ discordToken = os.getenv('DISCORD_TOKEN')
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument('--headless')
 chrome_options.add_argument('--disable-gpu')
-numberRefDict,nameRefDict = {},{}
+numberRefDict = {}
 
 @client.event
 async def on_ready():
     print('Bot started on account {0.user}'.format(client))
-    global numberRefDict,nameRefDict
+    global numberRefDict
     with open("numref.json") as f:
         numberRefDict = json.load(f)
-    with open("nameref.json") as f:
-        nameRefDict = json.load(f)
     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="to the ocean"))
 
 def webScrape(url):
