@@ -94,11 +94,11 @@ async def on_message(message):
                 if params[-1] in numberRefDict:
                     infoEmbed = discord.Embed(title = numberRefDict[params[-1]].get('name'), color = int(hex(random.randint(0,16777215)),16))
                     infoList = webScrape(numberRefDict.get(params[-1]).get('link'))
-                    infoEmbed.add_field(name = 'Water Temperature', value = infoList[0])
-                    infoEmbed.add_field(name = 'Air Temperature', value = infoList[1])
-                    infoEmbed.add_field(name = 'Wind Speed', value = infoList[2])
-                    infoEmbed.add_field(name = 'Water Level', value = infoList[3])
-                    infoEmbed.add_field(name = 'Air Pressure', value = infoList[4] + ' millibars')
+                    infoEmbed.add_field(name = 'Water Temperature', value = infoList[0], inline=False)
+                    infoEmbed.add_field(name = 'Air Temperature', value = infoList[1], inline=False)
+                    infoEmbed.add_field(name = 'Wind Speed', value = infoList[2], inline=False)
+                    infoEmbed.add_field(name = 'Water Level', value = infoList[3], inline=False)
+                    infoEmbed.add_field(name = 'Air Pressure', value = infoList[4] + ' millibars', inline=False)
                     await message.channel.send(embed = infoEmbed)
                     print(time.time()-startT)
             elif isinstance(params[-1], str):
@@ -106,11 +106,11 @@ async def on_message(message):
                     if re.search(r"\b" + re.escape(" ".join(params[1:]).lower()) + r"\b", numberRefDict[i].get('name').lower()):
                         infoEmbed = discord.Embed(title = numberRefDict[i].get('name'), color = int(hex(random.randint(0,16777215)),16))
                         infoList = webScrape(numberRefDict[i].get('link'))
-                        infoEmbed.add_field(name = 'Water Temperature', value = infoList[0])
-                        infoEmbed.add_field(name = 'Air Temperature', value = infoList[1])
-                        infoEmbed.add_field(name = 'Wind Speed', value = infoList[2])
-                        infoEmbed.add_field(name = 'Water Level', value = infoList[3])
-                        infoEmbed.add_field(name = 'Air Pressure', value = infoList[4] + ' millibars')
+                        infoEmbed.add_field(name = 'Water Temperature', value = infoList[0], inline=False)
+                        infoEmbed.add_field(name = 'Air Temperature', value = infoList[1], inline=False)
+                        infoEmbed.add_field(name = 'Wind Speed', value = infoList[2], inline=False)
+                        infoEmbed.add_field(name = 'Water Level', value = infoList[3], inline=False)
+                        infoEmbed.add_field(name = 'Air Pressure', value = infoList[4] + ' millibars', inline=False)
                         await message.channel.send(embed = infoEmbed)
                         print(time.time()-startT)
                         break
