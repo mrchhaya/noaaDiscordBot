@@ -1,6 +1,6 @@
 import discord,os,time,json,random, re
-from dotenv import load_dotenv
 from selenium import webdriver
+from dotenv import load_dotenv
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -10,8 +10,10 @@ client = discord.Client()
 load_dotenv('secrets.env')
 discordToken = os.getenv('DISCORD_TOKEN')
 chrome_options = webdriver.ChromeOptions()
+chrome_options.add_argument('--no-sandbox')
 chrome_options.add_argument('--headless')
 chrome_options.add_argument('--disable-gpu')
+chrome_options.add_argument("--window-size=1920, 1200")
 numberRefDict = {}
 
 @client.event
@@ -26,8 +28,8 @@ def webScrape(url):
 
     wT, aT, wind, wL, aP = False, False, False, False, False
     returnList = ['Could not find','Could not find','Could not find','Could not find','Could not find']
-
     driver=webdriver.Chrome(chrome_options=chrome_options)
+    # driver=webdriver.Chrome(executable_path=os.path.join(os.getcwd(),"chromedriver.exe"), chrome_options=chrome_options)
     driver.get(url)
     try:
         sensorTable = WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.XPATH, "//div[@class = 'span12']/table/tbody")))
